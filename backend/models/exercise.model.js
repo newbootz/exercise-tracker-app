@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+//exercise orm schema
 const exerciseSchema = new Schema({
 
     username: {type: String,required: true,},

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+//user orm schema
 const userSchema = new Schema({
     username: {
         type: String,
@@ -13,3 +14,7 @@ const userSchema = new Schema({
     }, {
         timestamps: true,
     });
+
+    const User = mongoose.model('User', userSchema);
+
+    module.exports = User;
