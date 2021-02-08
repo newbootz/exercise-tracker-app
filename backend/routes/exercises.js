@@ -12,10 +12,10 @@ router.route('/').get((req, res) => {
 //express handle incoming requests for '/add'
 //creates new exercise from payload
 router.route('/add').post((req, res) => {
-    const username = req.body.username;
+    const username    = req.body.username;
     const description = req.body.description;
-    const duration = Number(req.body.duration);
-    const date = Date.parse(req.body.date);
+    const duration    = Number(req.body.duration);
+    const date        = Date.parse(req.body.date);
 
     const newExercise = new Exercise({
         username,

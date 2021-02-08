@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import axios from 'axios';
 
 export default class CreateExercise extends Component {
 
@@ -7,11 +10,12 @@ export default class CreateExercise extends Component {
 
         super(props);
 
+        //bind this to refer to class inside methods
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeDuration = this.onChangeDuration.bind(this);
         this.onChangeDate = this.onChangeDate.bind(this);
-        this.onsSubmit = this.onsSubmit.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
 
         this.state = {
             username: '',
@@ -22,14 +26,21 @@ export default class CreateExercise extends Component {
         }
     }
 
+    //called before anything is displayed
     componentDidMount() {
-        this.setState({
-            users: ['testUser'],
-            username: 'testUser'
+        axios.get('http://localhost:5000/users/')
+        .then( response => {
+            if (response.data.length > 0) {
+                this.setState({
+                    users: response.data.map(user => user.username),
+                    username: response.data[0].username
+                });
+            }
         })
     }
 
     onChangeUsername(e) {
+        //set state to textbox value. Only update username and leave the rest unchanged.
         this.setState({
             username: e.target.value
         });
@@ -48,12 +59,14 @@ export default class CreateExercise extends Component {
     }
 
     onChangeDate(date) {
+        //using a calendar component. Allows us to just set the date as is.
         this.setState({
             date: date
         });
     }
 
-    onsSubmit(e) {
+    onSubmit(e) {
+        //prevent default html submit behavior
         e.preventDefault();
 
         const exercise = {
@@ -64,6 +77,10 @@ export default class CreateExercise extends Component {
         }
 
         console.log(exercise);
+
+        //need to handle error (duplicates not accepted currently)
+        axios.post('http://localhost:5000/exercises/add', exercise)
+        .then(res => console.log(res.data));
 
         //take user back to home page (list of exercises)
         window.location = '/'
@@ -97,13 +114,32 @@ export default class CreateExercise extends Component {
                         <label>Description: </label>
                         <input 
                         type="text"
+                        required
+                        className="form-control"
+                        value={this.state.description}
+                        onChange={this.onChangeDescription}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Duration: (in minutes): </label>
+                        <input 
+                        type="text"
                         className="form-control"
                         value={this.state.duration}
                         onChange={this.onChangeDuration}
                         />
                     </div>
-                    <div>
-                        
+                    <div className="form-group">
+                        <label>Date: </label>
+                        <div>
+                            <DatePicker 
+                            selected={this.state.date}
+                            onChange={this.onChangeDate}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <input type="submit" value="Create Exercise Log" className="btn btn-primary" />
                     </div>
                 </form>
             </div>
